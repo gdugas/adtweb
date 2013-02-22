@@ -28,7 +28,7 @@
     <div id="topbar" class="navbar navbar-fixed-top navbar-inverse">
         <div class="navbar-inner">
             <div class="container">
-                <a href="#" class="brand">&nbsp;Dns zone editor</a>
+                <a href="zones.html" class="brand">&nbsp;Dns zone editor</a>
                 <form class="navbar-form pull-right">
                   <input type="text" placeholder="Search domain" data-provide="typeahead" data-items="5" data-source='["example1.com", "example2.com", "example3.com", "example4.com", "example5.com"]'>
                 </form>
@@ -37,41 +37,6 @@
     </div>
     
     
-    <div id="record-form" class="modal hide fade" role="dialog">
-        <form>
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Record edition</h3>
-            </div>
-            <div class="modal-body">
-                <fieldset>
-                    <legend>Record infos</legend>
-                    
-                    <input type="hidden" name="cid" value="">
-                    
-                    <input type="text" name="name" placeholder="Record name"><br />
-                    
-                    <select name="type">
-                        <option value="a">A</option>
-                        <option value="aaaa">AAAA</option>
-                        <option value="cname">CNAME</option>
-                        <option value="mx">MX</option>
-                        <option value="ns">NS</option>
-                        <option value="ptr">PTR</option>
-                        <option value="txt">TXT</option>
-                    </select><br />
-                    
-                    <input type="text" name="rdata" placeholder="Record value">
-                    
-                </fieldset>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <input type="submit" class="btn btn-primary" value="Add">
-            </div>
-        </form>
-    </div>
-    
     <div id="page">
         <div class="wrapper container">
             <ul class="breadcrumb">
@@ -79,13 +44,88 @@
                 <li class="active">example.com</li>
             </ul>
             
-            <div class="alert">
+            <div class="alert alert-error">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                <strong>Warning!</strong> Zone could not be saved.
+                <strong>Warning!</strong> This is a demo version, zone could not be saved.
+            </div>
+
+            <div id="zone" class="hero-unit">
+                <div id="zone-form" class="modal hide fade" role="dialog">
+                    <form>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Zone edition</h3>
+                        </div>
+                        <div class="modal-body">
+                            <fieldset>
+                                <legend>Zone infos</legend>
+                                <div class="zone-fields"></div>
+                            </fieldset>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Update">
+                        </div>
+                    </form>
+                </div>
+                
+                <h1>example.com <a href="#zone-form" class="btn btn-primary" data-toggle="modal">Edit</a></h1>
+                <dl class="dl-horizontal">
+                    <dt>ttl</dt>
+                    <dd class="zone-ttl" data-label="ttl">10</dd>
+                    <dt>nameserver</dt>
+                    <dd class="zone-nameserver" data-label="Nameserver">ns1.example.com.</dd>
+                    <dt>postmaster</dt>
+                    <dd class="zone-postmaster" data-label="Postmaster">postmaster@example.com</dd>
+                    <dt>refresh</dt>
+                    <dd class="zone-refresh" data-label="Refresh">10800</dd>
+                    <dt>retry</dt>
+                    <dd class="zone-retry" data-label="Retry">3600</dd>
+                    <dt>expire</dt>
+                    <dd class="zone-expire" data-label="Expire">604800</dd>
+                    <dt>minimum</dt>
+                    <dd class="zone-minimum" data-label="Minimum">38400</dd>
+                </dl>
             </div>
             
+            
             <div id="components">
-                <table class="table">
+                <div id="record-form" class="modal hide fade" role="dialog">
+                    <form>
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Record edition</h3>
+                        </div>
+                        <div class="modal-body">
+                            <fieldset>
+                                <legend>Record infos</legend>
+                                
+                                <input type="hidden" name="cid" value="">
+                                
+                                <input type="text" name="name" placeholder="Record name"><br />
+                                
+                                <select name="type">
+                                    <option value="a">A</option>
+                                    <option value="aaaa">AAAA</option>
+                                    <option value="cname">CNAME</option>
+                                    <option value="mx">MX</option>
+                                    <option value="ns">NS</option>
+                                    <option value="ptr">PTR</option>
+                                    <option value="txt">TXT</option>
+                                </select><br />
+                                
+                                <input type="text" name="rdata" placeholder="Record value">
+                                
+                            </fieldset>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                            <input type="submit" class="btn btn-primary" value="Add">
+                        </div>
+                    </form>
+                </div>
+                
+                <table class="table table-striped">
                     <caption>example.com</caption>
                     <thead>
                         <tr>
@@ -134,7 +174,7 @@ $(document).ready(function () {
         handle: ".icon-move",
         update: function (event, ui) {
             var row = ui.item[0],
-                cid = $(row).attr('cid'),
+                cid = $(row).attr('data-cid'),
                 index = row.rowIndex,
                 rec = records.get(cid);
             
@@ -155,7 +195,7 @@ $(document).ready(function () {
         return false;
     });
     
-    $(document).on('click', 'i.icon-remove', function () {
+    $(document).on('click', 'i.icon-trash', function () {
         if (confirm('Sure ?')) {
             var record = $(this).parent().parent().attr('data-cid');
             records.remove(record);

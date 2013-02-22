@@ -13,6 +13,7 @@
         #footer { height: 80px; border-top: 1px solid #ccc; width: 100%; text-align: center; }
         
         i { margin-right: 20px; cursor: pointer;}
+        .label-success {background-color: #f89406;}
     </style>
 </head>
 <body>
@@ -51,27 +52,33 @@
             <ul class="breadcrumb">
                 <li class="active">Domains</li>
             </ul>
+            
+            <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Warning!</strong> This is a demo version, zone could not be saved.
+            </div>
+            
             <div id="components" >
                 <table class="table table-striped">
                     <tbody>
                         <tr data-zone="example1.com">
-                            <td><i class="icon-remove"></i></td>
+                            <td><i class="icon-ok" title="disable"></i><i class="icon-trash" title="delete"></i></td>
                             <td><a href="zone.html">example1.com</a></td>
                         </tr>
-                        <tr data-zone="example2.com">
-                            <td><i class="icon-remove"></i></td>
+                        <tr data-zone="example2.com" class="error">
+                            <td><i class="icon-remove" title="enable"></i><i class="icon-trash" title="delete"></td>
                             <td><a href="zone.html">example2.com</a></td>
                         </tr>
                         <tr data-zone="example3.com">
-                            <td><i class="icon-remove"></i></td>
+                            <td><i class="icon-ok" title="disable"></i><i class="icon-trash" title="delete"></i></td>
                             <td><a href="zone.html">example3.com</a></td>
                         </tr>
                         <tr data-zone="example4.com">
-                            <td><i class="icon-remove"></i></td>
+                            <td><i class="icon-ok" title="disable"></i><i class="icon-trash" title="delete"></i></td>
                             <td><a href="zone.html">example4.com</a></td>
                         </tr>
                         <tr data-zone="example5.com">
-                            <td><i class="icon-remove"></i></td>
+                            <td><i class="icon-ok" title="disable"></i><i class="icon-trash" title="delete"></i></td>
                             <td><a href="zone.html">example5.com</a></td>
                         </tr>
                     </tbody>
@@ -79,10 +86,22 @@
                 <a href="#record-form"  data-cid="0" class="btn btn-primary" data-toggle="modal">Add zone</a>
                 <script>
                     $(document).ready(function () {
-                        $('i.icon-remove').on('click', function () {
+                        $('i.icon-trash').on('click', function () {
                             if (confirm('sure ?')) {
                                 $(this).parent().parent().remove();
                             }
+                        });
+                        
+                        $(document).on('click', 'i.icon-ok', function () {
+                            $(this).removeClass('icon-ok').addClass('icon-remove').attr('title', 'enable');
+                            var row = $(this).parent().parent();
+                            row.addClass('error');
+                        });
+                        
+                        $(document).on('click', 'i.icon-remove', function () {
+                            var row = $(this).parent().parent();
+                            $(this).removeClass('icon-remove').addClass('icon-ok').attr('title', 'disable');
+                            row.removeClass('error');
                         });
                     });
                 </script>

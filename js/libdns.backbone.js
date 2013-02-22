@@ -28,7 +28,7 @@ libdns.Record = Backbone.Model.extend({
     initialize: function () {
         this.view = new libdns.RecordView({
             'model': this,
-            template: '<td><i class="icon-move"></i><i class="icon-edit"></i><i class="icon-remove"></i></td><td><a href="#record-form" data-cid="<%= cid %>"><%= name %></a></td><td><%= type %></td><td><%= cls %></td><td><%= ttl %></td><td><%= rdlength %></td><td><%= rdata %></td>',
+            template: '<td><i class="icon-move"></i><i class="icon-edit"></i><i class="icon-trash"></i></td><td><a href="#record-form" data-cid="<%= cid %>"><%= name %></a></td><td><%= type %></td><td><%= cls %></td><td><%= ttl %></td><td><%= rdlength %></td><td><%= rdata %></td>',
         });
     }
 });
@@ -66,22 +66,22 @@ libdns.Records = Backbone.Collection.extend({
 });
 
 
-/*
+
 libdns.Zone = Backbone.Model.extend({
     defaults: {
         'ttl': 38400,
         'cls': 'IN',
         'nameserver': null,
-        'email': null,
+        'postmaster': null,
         'sn': null,
         'refresh': 10800,
         'retry': 3600,
         'expire': 604800,
         'minimum': 38400,
-        'records': new libdns.Records()
+        'records': new libdns.Records([], {container: $()})
     }
 });
-*/
+
 
 libdns.FormView = Backbone.View.extend({
     events: {
