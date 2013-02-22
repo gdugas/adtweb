@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="http://code.jquery.com/ui/1.10.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-responsive.min.css" rel="stylesheet">
+    
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>
+    <style>
+        body { background-color: #fff; }
+        #page > .wrapper { padding-top: 60px; padding-bottom: 50px; }
+        #footer { height: 80px; border-top: 1px solid #ccc; width: 100%; text-align: center; }
+        
+        i { margin-right: 20px; cursor: pointer;}
+    </style>
+</head>
+<body>
+    
+    <div id="topbar" class="navbar navbar-fixed-top navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+                <a href="#" class="brand">&nbsp;Dns zone editor</a>
+                <form class="navbar-form pull-right">
+                  <input type="text" placeholder="Search domain" data-provide="typeahead" data-items="5" data-source='["example1.com", "example2.com", "example3.com", "example4.com", "example5.com"]'>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="record-form" class="modal hide fade" role="dialog">
+        <form>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Zone creation</h3>
+            </div>
+            <div class="modal-body">
+                <fieldset>
+                    <input type="text" name="name" placeholder="Zone name"><br />
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <input type="submit" class="btn btn-primary" value="Create" onsubmit="return false;">
+            </div>
+        </form>
+    </div>
+    
+    <div id="page">
+        <div class="wrapper container">
+            <ul class="breadcrumb">
+                <li class="active">Domains</li>
+            </ul>
+            <div id="components" >
+                <table class="table table-striped">
+                    <tbody>
+                        <tr data-zone="example1.com">
+                            <td><i class="icon-remove"></i></td>
+                            <td><a href="zone.html">example1.com</a></td>
+                        </tr>
+                        <tr data-zone="example2.com">
+                            <td><i class="icon-remove"></i></td>
+                            <td><a href="zone.html">example2.com</a></td>
+                        </tr>
+                        <tr data-zone="example3.com">
+                            <td><i class="icon-remove"></i></td>
+                            <td><a href="zone.html">example3.com</a></td>
+                        </tr>
+                        <tr data-zone="example4.com">
+                            <td><i class="icon-remove"></i></td>
+                            <td><a href="zone.html">example4.com</a></td>
+                        </tr>
+                        <tr data-zone="example5.com">
+                            <td><i class="icon-remove"></i></td>
+                            <td><a href="zone.html">example5.com</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="#record-form"  data-cid="0" class="btn btn-primary" data-toggle="modal">Add zone</a>
+                <script>
+                    $(document).ready(function () {
+                        $('i.icon-remove').on('click', function () {
+                            if (confirm('sure ?')) {
+                                $(this).parent().parent().remove();
+                            }
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+    
+    <div id="footer">
+        <p class="muted credit">
+            Powered by <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a> - 
+            Icons by <a href="http://www.glyphicons.com">Glyphicons</a>
+        </p>
+    </div>
+
+</body>
+</html>

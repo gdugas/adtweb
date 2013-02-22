@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="http://code.jquery.com/ui/1.10.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-responsive.min.css" rel="stylesheet">
+    
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+    <script src="../js/libdns.backbone.js"></script>
+    <style>
+        body { background-color: #fff; }
+        #page > .wrapper { padding-top: 60px; padding-bottom: 50px; }
+        #records i { margin-right: 20px; cursor: pointer;}
+        #records i.icon-resize-vertical { cursor:move; }
+        #footer { height: 80px; border-top: 1px solid #ccc; width: 100%; text-align: center; }
+        
+        .ui-state-highlight { height: 1.5em; line-height: 1.2em;}
+        .ui-sortable-helper { background-color: #fff; }
+    </style>
+</head>
+<body>
+    
+    <div id="topbar" class="navbar navbar-fixed-top navbar-inverse">
+        <div class="navbar-inner">
+            <div class="container">
+                <a href="#" class="brand">&nbsp;Dns zone editor</a>
+                <form class="navbar-form pull-right">
+                  <input type="text" placeholder="Search domain" data-provide="typeahead" data-items="5" data-source='["example1.com", "example2.com", "example3.com", "example4.com", "example5.com"]'>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div id="record-form" class="modal hide fade" role="dialog">
+        <form>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Record edition</h3>
+            </div>
+            <div class="modal-body">
+                <fieldset>
+                    <legend>Record infos</legend>
+                    
+                    <input type="hidden" name="cid" value="">
+                    
+                    <input type="text" name="name" placeholder="Record name"><br />
+                    
+                    <select name="type">
+                        <option value="a">A</option>
+                        <option value="aaaa">AAAA</option>
+                        <option value="cname">CNAME</option>
+                        <option value="mx">MX</option>
+                        <option value="ns">NS</option>
+                        <option value="ptr">PTR</option>
+                        <option value="txt">TXT</option>
+                    </select><br />
+                    
+                    <input type="text" name="rdata" placeholder="Record value">
+                    
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <input type="submit" class="btn btn-primary" value="Add">
+            </div>
+        </form>
+    </div>
+    
+    <div id="page">
+        <div class="wrapper container">
+            <ul class="breadcrumb">
+                <li><a href="zones">Domains</a> <span class="divider">/</span></li>
+                <li class="active">example.com</li>
+            </ul>
+            
+            <div class="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Warning!</strong> Zone could not be saved.
+            </div>
+            
+            <div id="components">
+                <table class="table">
+                    <caption>example.com</caption>
+                    <thead>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>Name</td>
+                            <td>Type</td>
+                            <td>Class</td>
+                            <td>Ttl</td>
+                            <td>RDlength</td>
+                            <td>Rdata</td>
+                        </tr>
+                    </thead>
+                    <tbody id="records">
+                    </tbody>
+                </table>
+                <a href="#record-form"  data-cid="0" class="btn btn-primary">Add record</a>
+            </div>
+        </div>
+    </div>
+    
+    <div id="footer">
+        <p class="muted credit">
+            Powered by <a href="http://twitter.github.com/bootstrap/index.html">Bootstrap</a> - 
+            Icons by <a href="http://www.glyphicons.com">Glyphicons</a>
+        </p>
+    </div>
+
+<script>
+$(document).ready(function () {
+    var records = new libdns.Records([
+        new libdns.Record({name: 'example.com.', type: 'ns', rdata: 'ns1.example.com.'}),
+        new libdns.Record({name: 'example.com.', type: 'ns', rdata: 'ns2.example.com.'}),
+        new libdns.Record({name: 'example.com.', type: 'a', rdata: '192.168.1.1'}),
+        new libdns.Record({name: 'ftp.example.com.', type: 'cname', rdata: 'example.com.'}),
+        new libdns.Record({name: 'mail.example.com.', type: 'cname', rdata: 'example.com.'}),
+        new libdns.Record({name: 'www.example.com.', type: 'cname', rdata: 'example.com.'})
+    ], {container: $('#records')});
+    records.view.render();
+    var form = new libdns.Form({}, {
+        container: $('#record-form'),
+        records: records
+    });
+    
+    $("#records").sortable({
+        placeholder: "ui-state-highlight",
+        handle: ".icon-move",
+        update: function (event, ui) {
+            var row = ui.item[0],
+                cid = $(row).attr('cid'),
+                index = row.rowIndex,
+                rec = records.get(cid);
+            
+            records.remove(rec);
+            records.add(rec, {
+                at: index - 1
+            });
+        }
+    });
+    
+    $(document).on('click', 'a[href=#record-form]', function () {
+        form.view.show($(this).attr('data-cid'));
+        return false;
+    });
+    
+    $(document).on('click', 'i.icon-edit', function () {
+        form.view.show($(this).parent().parent().attr('data-cid'));
+        return false;
+    });
+    
+    $(document).on('click', 'i.icon-remove', function () {
+        if (confirm('Sure ?')) {
+            var record = $(this).parent().parent().attr('data-cid');
+            records.remove(record);
+            return false;
+        }
+    });
+});
+</script>
+</body>
+</html>
